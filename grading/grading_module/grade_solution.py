@@ -116,20 +116,20 @@ def evaluate_results_task2(predictions_path,ground_truth_path,verbose = 0):
 
 
 
-verbose = 0
+verbose = 1
 
 #change this on your machine
-predictions_path_root = "..\\fisiere_solutie\\Alexe_Bogdan_331\\"
-ground_truth_path_root = "..\\..\\antrenare\\"
+predictions_path_root = "/home/charmichles/Desktop/Coding/Git Repos/sudoku-cv/Brihac_Andrei_333/"
+ground_truth_path_root = "train/"
 
 #task1
-predictions_path = predictions_path_root + "clasic\\"
-ground_truth_path = ground_truth_path_root + "clasic\\"
+predictions_path = predictions_path_root + "classic"
+ground_truth_path = ground_truth_path_root + "classic"
 total_correct_task1,points_task1,total_correct_bonus_task1,points_bonus_task1 = evaluate_results_task1(predictions_path,ground_truth_path,verbose)
 print(total_correct_task1,points_task1,total_correct_bonus_task1,points_bonus_task1)
 
 #task2
-predictions_path = predictions_path_root + "jigsaw\\"
-ground_truth_path = ground_truth_path_root + "jigsaw\\"
-total_correct_task2,points_task2,total_correct_bonus_task2,points_bonus_task2 = evaluate_results_task2(predictions_path,ground_truth_path,verbose)
-print(total_correct_task2,points_task2,total_correct_bonus_task2,points_bonus_task2)
+# predictions_path = predictions_path_root + "jigsaw"
+# ground_truth_path = ground_truth_path_root + "jigsaw"
+# total_correct_task2,points_task2,total_correct_bonus_task2,points_bonus_task2 = evaluate_results_task2(predictions_path,ground_truth_path,verbose)
+# print(total_correct_task2,points_task2,total_correct_bonus_task2,points_bonus_task2)
