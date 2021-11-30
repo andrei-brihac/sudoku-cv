@@ -14,10 +14,10 @@ Run **main.py** from the root folder using:
 
 python3 src/main.py
 
-Changing which tasks to run can be done in **main.py** using the **types** variable.
+### Changing tasks and I/O paths.
+1. Changing which task to run can be done in **main.py** using the **types** variable.
 
-Changing the paths to input and output folders can be done in **utils.py** using the **cwd**, **input_path**, **output_path** variables.
+2. Changing the paths to input and output folders can be done in **utils.py** using the **cwd**, **input_path**, **output_path** variables.
+- **Note**: you only have to create the output folder, the task folders are created by the script.
 
-**Note**: you only have to create the output folder, the task folders are created by the script.
-
-For grading results, inside the **grade_solutions.py** file change the **cwd**, **predictions_path_root**, **ground_truth_path_root** variables.
+3. For grading results, inside the **grade_solutions.py** file change the **cwd**, **predictions_path_root**, **ground_truth_path_root** variables.
