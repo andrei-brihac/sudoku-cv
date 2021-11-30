@@ -1,7 +1,6 @@
 import cv2 as cv
 import numpy as np
 from typing import Tuple
-import utils
 
 
 def manhattan_distance(p1 : Tuple[int, int], p2 : Tuple[int, int]) -> int:
@@ -12,13 +11,13 @@ def euclidean_distance(p1 : Tuple[int, int], p2 : Tuple[int, int]) -> int:
 
 def preprocess_img(img : np.ndarray) -> np.ndarray:
     """
-        returns a binary adaptive thresholded image
+        returns a binary adaptive thresholded image to be used for edge detection
     """
     img_gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     img_blur = cv.GaussianBlur(img_gray, (9, 9), 0)
     img_thresh = cv.adaptiveThreshold(img_blur, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2)
     img_inverted = cv.bitwise_not(img_thresh)
-    img_dilated = cv.dilate(img_inverted, np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], dtype=np.uint8))
+    img_dilated = cv.dilate(img_inverted, np.ones((3, 3), dtype=np.uint8))  # dilate to make edges more visible
     return img_dilated
 
 def get_grid(img : np.ndarray) -> np.ndarray:
@@ -58,25 +57,39 @@ def get_grid(img : np.ndarray) -> np.ndarray:
     perspective_transform_matrix = cv.getPerspectiveTransform(corners, new_img_corners)
     return cv.warpPerspective(img, perspective_transform_matrix, (new_img_w, new_img_h))
 
+def get_grid_zones(grid : np.ndarray) -> np.ndarray:
+    """
+        returns a 2D array where arr[i, j] is the jigsaw zone number of the square at row=i, col=j
+    """
+    return np.zeros((9, 9), dtype=np.uint8)
+
 def get_squares(grid : np.ndarray) -> np.ndarray:
+    """
+        returns a generator for each grid cell in the sudoku grid
+    """
     grid_h, grid_w = grid.shape
     sqr_h, sqr_w = grid_h // 9, grid_w // 9
     for i in range(9):
         for j in range(9):
-            yield grid[i*sqr_h:i*sqr_h + sqr_h, j*sqr_w:j*sqr_w + sqr_w]
+            yield grid[i*sqr_h:i*sqr_h + sqr_h, j*sqr_w:j*sqr_w + sqr_w], i, j
 
-def get_square_state(sqr : np.ndarray) -> str:
-    # cut 1/4 around each border to make sure there's no extra lines left
+def get_square_cut(sqr : np.ndarray) -> str:
+    """
+        returns a square cut by 1/4 on all sides
+    """
     sqr_h, sqr_w = sqr.shape
     sqr = sqr[sqr_h//4:, 0:sqr_w - sqr_w//4]
     sqr_h, sqr_w = sqr.shape
     sqr = sqr[0:sqr_h - sqr_h//4, sqr_w//4:]
-    sqr = cv.erode(sqr, np.ones((3, 3), dtype=np.uint8))
-    mean = np.mean(sqr)
-    return 'x' if mean > 20 else 'o'
+    sqr = cv.erode(sqr, np.ones((3, 3), dtype=np.uint8))  # erode to make the digit a bit clearer
+    return sqr
 
-def get_square_zone(sqr : np.ndarray) -> str:
-    return '-1'
+def get_square_state(sqr : np.ndarray) -> str:
+    """
+        returns 'x' if square contains a digit, otherwise returns 'o'
+    """
+    mean = np.mean(get_square_cut(sqr.copy()))
+    return 'x' if mean > 20 else 'o'
 
 def get_square_digit(sqr : np.ndarray) -> str:
     if get_square_state(sqr.copy()) == 'o':
