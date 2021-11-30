@@ -1,3 +1,6 @@
+import os
+
+
 def evaluate_results_task1(predictions_path,ground_truth_path,verbose = 0):
     total_correct = 0
     for i in range(1,21):
@@ -116,11 +119,12 @@ def evaluate_results_task2(predictions_path,ground_truth_path,verbose = 0):
 
 
 
-verbose = 1
+verbose = 0
 
 #change this on your machine
-predictions_path_root = "/home/charmichles/Desktop/Coding/Git Repos/sudoku-cv/Brihac_Andrei_333/"
-ground_truth_path_root = "train/"
+cwd = os.path.abspath(os.getcwd())
+predictions_path_root = f'{cwd}/Brihac_Andrei_333/'
+ground_truth_path_root = f'{cwd}/train/'
 
 #task1
 predictions_path = predictions_path_root + "classic"
@@ -129,7 +133,7 @@ total_correct_task1,points_task1,total_correct_bonus_task1,points_bonus_task1 = 
 print(total_correct_task1,points_task1,total_correct_bonus_task1,points_bonus_task1)
 
 #task2
-# predictions_path = predictions_path_root + "jigsaw"
-# ground_truth_path = ground_truth_path_root + "jigsaw"
-# total_correct_task2,points_task2,total_correct_bonus_task2,points_bonus_task2 = evaluate_results_task2(predictions_path,ground_truth_path,verbose)
-# print(total_correct_task2,points_task2,total_correct_bonus_task2,points_bonus_task2)
+predictions_path = predictions_path_root + "jigsaw"
+ground_truth_path = ground_truth_path_root + "jigsaw"
+total_correct_task2,points_task2,total_correct_bonus_task2,points_bonus_task2 = evaluate_results_task2(predictions_path,ground_truth_path,verbose)
+print(total_correct_task2,points_task2,total_correct_bonus_task2,points_bonus_task2)

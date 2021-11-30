@@ -65,7 +65,7 @@ def get_squares(grid : np.ndarray) -> np.ndarray:
         for j in range(9):
             yield grid[i*sqr_h:i*sqr_h + sqr_h, j*sqr_w:j*sqr_w + sqr_w]
 
-def square_is_filled(sqr : np.ndarray) -> bool:
+def get_square_state(sqr : np.ndarray) -> str:
     # cut 1/4 around each border to make sure there's no extra lines left
     sqr_h, sqr_w = sqr.shape
     sqr = sqr[sqr_h//4:, 0:sqr_w - sqr_w//4]
@@ -73,4 +73,12 @@ def square_is_filled(sqr : np.ndarray) -> bool:
     sqr = sqr[0:sqr_h - sqr_h//4, sqr_w//4:]
     sqr = cv.erode(sqr, np.ones((3, 3), dtype=np.uint8))
     mean = np.mean(sqr)
-    return mean > 20
+    return 'x' if mean > 20 else 'o'
+
+def get_square_zone(sqr : np.ndarray) -> str:
+    return '-1'
+
+def get_square_digit(sqr : np.ndarray) -> str:
+    if get_square_state(sqr.copy()) == 'o':
+        return 'o'
+    return '-1'

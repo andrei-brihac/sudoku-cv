@@ -5,7 +5,7 @@ import sudoku
 from typing import List
 
 cwd = os.path.abspath(os.getcwd())  # path to root folder
-input_path = f'{cwd}/grading/fake_test'  # path to input folder
+input_path = f'{cwd}/train'  # path to input folder
 output_path = f'{cwd}/Brihac_Andrei_333'  # path to output folder
 img_extension = '.jpg'
 
@@ -27,11 +27,14 @@ def write_solution(img : str, type : str, name : str) -> None:
     name = name.strip(img_extension)
     with open(f'{output_path}/{type}/{name}_predicted.txt', 'w') as f1, open(f'{output_path}/{type}/{name}_bonus_predicted.txt', 'w') as f2:
         grid = sudoku.get_grid(img)
-        i = 0
-        j = 0
+        i, j = 0, 0
         for square in sudoku.get_squares(grid):
-            f1.write('x' if sudoku.square_is_filled(square) else 'o')
-            f2.write('x' if sudoku.square_is_filled(square) else 'o')
+            if type == 'jigsaw':
+                zone = sudoku.get_square_zone(square)
+                f1.write(zone)
+                f2.write(zone)
+            f1.write(sudoku.get_square_state(square))
+            f2.write(sudoku.get_square_digit(square))
             i += 1
             if i >= 9:
                 i = 0
