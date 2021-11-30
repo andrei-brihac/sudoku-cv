@@ -2,8 +2,9 @@ import utils
 import traceback
 
 verbose = True
+types = ['classic', 'jigsaw']
 
-for type in ['classic', 'jigsaw']:
+for type in types:
     for img, img_name in utils.get_images(type):
         try:
             if verbose:

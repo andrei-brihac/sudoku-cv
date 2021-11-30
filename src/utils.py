@@ -5,8 +5,8 @@ import sudoku
 from typing import List
 
 cwd = os.path.abspath(os.getcwd())  # path to root folder
-input_path = f'{cwd}/train'  # path to input folder
-output_path = f'{cwd}/Brihac_Andrei_333'  # path to output folder
+input_path = f'{cwd}/train'
+output_path = f'{cwd}/Brihac_Andrei_333'
 img_extension = '.jpg'
 
 def show_image(img : np.ndarray, name : str = '') -> None:
@@ -15,7 +15,7 @@ def show_image(img : np.ndarray, name : str = '') -> None:
     cv.destroyAllWindows()
 
 def get_images(type : str) -> List[np.ndarray]:
-    global cwd, input_path
+    global input_path
     img_names = filter(lambda name : img_extension in name, os.listdir(f'{input_path}/{type}'))
     for img_name in sorted(img_names):
         img = cv.imread(f'{input_path}/{type}/{img_name}')  # complete path to image
@@ -23,7 +23,9 @@ def get_images(type : str) -> List[np.ndarray]:
         yield img, img_name
 
 def write_solution(img : str, type : str, name : str) -> None:
-    global cwd, output_path
+    global output_path
+    if type not in os.listdir(output_path):
+        os.mkdir(f'{output_path}/{type}')
     name = name.strip(img_extension)
     with open(f'{output_path}/{type}/{name}_predicted.txt', 'w') as f1, open(f'{output_path}/{type}/{name}_bonus_predicted.txt', 'w') as f2:
         grid = sudoku.get_grid(img)
