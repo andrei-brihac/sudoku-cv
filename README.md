@@ -42,9 +42,10 @@ After getting the image of the sudoku grid, it separates each cell and checks wh
 ### Task 2 - jigsaw sudoku
 
 The added difficulty is finding out which zone each cell belongs to. The jigsaw sudoku images have thicker lines separating the zones so we can do the following:
+
 1. Modify the grid image so that it retains the thicker lines and gets rid of the thinner lines. (see **enhance_thick_lines**).
 2. Use an algorithm to label the cells according to their neighbours, where the neighbours are cells not separated by a border from the original cell. (see **get_grid_zones**)
 3. Neighbours of the same cell with different zones denote that two previously unconnected zones have been connected.
 4. Labels are changed according to these connections and then re-indexed to numbers from 1 to 9 - the total number of zones.
 
-My solution works 100% of the time for classic sudoku and about 50% of the time for jigsaw sudoku. You can use the functions in **src/utils.py** to display images and modify behaviour. 
+My solution works 100% of the time for classic sudoku and about 50% of the time for jigsaw sudoku. You can use the functions in **src/utils.py** to display images and modify behaviour.
