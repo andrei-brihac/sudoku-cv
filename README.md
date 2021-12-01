@@ -24,8 +24,8 @@ Run **main.py** from the root folder using:
 
 3. For grading results, inside the **grade_solutions.py** file change the **cwd**, **predictions_path_root**, **ground_truth_path_root** variables.
 
-### Solution description
+## Solution description
 
-#### Task 1 - classic sudoku
+### Task 1 - classic sudoku
 
-#### Task 2 - jigsaw sudoku
+### Task 2 - jigsaw sudoku
