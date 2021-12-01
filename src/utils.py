@@ -46,8 +46,8 @@ def write_solution(img : str, type : str, name : str) -> None:
             if type == 'jigsaw':
                 f1.write(str(grid_zones[row][col]))
                 f2.write(str(grid_zones[row][col]))
-            f1.write(sudoku.get_square_state(square))
-            f2.write(sudoku.get_square_digit(square))
+            f1.write(sudoku.get_square_state(square.copy()))
+            f2.write(sudoku.get_square_digit(square.copy()))
             i += 1
             if i >= 9:
                 i = 0

@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 from typing import Tuple
+import utils
 
 
 def manhattan_distance(p1 : Tuple[int, int], p2 : Tuple[int, int]) -> int:
@@ -9,18 +10,26 @@ def manhattan_distance(p1 : Tuple[int, int], p2 : Tuple[int, int]) -> int:
 def euclidean_distance(p1 : Tuple[int, int], p2 : Tuple[int, int]) -> int:
     return np.sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)
 
-def preprocess_img(img : np.ndarray) -> np.ndarray:
-    """
-        returns a binary adaptive thresholded image to be used for edge detection
-    """
-    img_gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-    img_blur = cv.GaussianBlur(img_gray, (9, 9), 0)
-    img_thresh = cv.adaptiveThreshold(img_blur, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2)
-    img_inverted = cv.bitwise_not(img_thresh)
-    img_dilated = cv.dilate(img_inverted, np.ones((3, 3), dtype=np.uint8))  # dilate to make edges more visible
-    return img_dilated
-
 def get_grid(img : np.ndarray) -> np.ndarray:
+    """
+        returns a cropped sudoku image that only contains the sudoku grid\n
+        finds the contours with findContours and crops the contour with the maximum area - the sudoku grid - from the main image\n
+        the cropping operation is done using warpPerspective:\n 
+            - 4 bounding points for the new image are found by getting the four corners of the maxarea contour\n
+            - 4 bounding points for the old image are the corners of the main image\n
+        the corners of the grid are found by comparing each point in the maxarea contour with the nearest main image corner\n
+        for each corner of the main image, the nearest maxarea contour point is taken
+    """
+    def enhance_grid(img : np.ndarray) -> np.ndarray:
+        """
+            returns an image more suited for extracting the grid with findContours
+        """
+        img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)  # get grayscale image
+        img = cv.GaussianBlur(img, (9, 9), 0)  # blur get rid of noise
+        img = cv.bitwise_not(cv.adaptiveThreshold(img, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2))  # thresh to get rid of bright/dark spots
+        img = cv.dilate(img, np.ones((3, 3), dtype=np.uint8))  # dilate to make edges more visible
+        return img
+
     def compare_corners(old_corner, new_corner, is_left, is_top, img_h, img_w):
         """
             returns the point with the smaller manhattan distance to the chosen corner\n
@@ -33,14 +42,13 @@ def get_grid(img : np.ndarray) -> np.ndarray:
         new_corner_distance = manhattan_distance(new_corner, img_corner)
         return new_corner if new_corner_distance < old_corner_distance else old_corner
 
-    img = preprocess_img(img)
-    contours = cv.findContours(cv.Canny(img, 85, 255), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)[0]
+    contours = cv.findContours(enhance_grid(img.copy()), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)[0]
     maxarea_contour = max(contours, key = lambda contour : cv.contourArea(contour))
     # using is_left for rows and is_top for columns we get the matrix:
     # [bottom_right, top_right] 
     # [bottom_left, top_left]
     corners = [[None, None], [None, None]]
-    img_h, img_w = img.shape
+    img_h, img_w, _ = img.shape
     for point in maxarea_contour:
         x, y = point[0][0], point[0][1]
         is_left = x < img_w // 2
@@ -67,7 +75,7 @@ def get_squares(grid : np.ndarray) -> np.ndarray:
     """
         returns a generator for each grid cell in the sudoku grid
     """
-    grid_h, grid_w = grid.shape
+    grid_h, grid_w, _ = grid.shape
     sqr_h, sqr_w = grid_h // 9, grid_w // 9
     for i in range(9):
         for j in range(9):
@@ -77,18 +85,28 @@ def get_square_cut(sqr : np.ndarray) -> str:
     """
         returns a square cut by 1/4 on all sides
     """
-    sqr_h, sqr_w = sqr.shape
-    sqr = sqr[sqr_h//4:, 0:sqr_w - sqr_w//4]
-    sqr_h, sqr_w = sqr.shape
-    sqr = sqr[0:sqr_h - sqr_h//4, sqr_w//4:]
-    sqr = cv.erode(sqr, np.ones((3, 3), dtype=np.uint8))  # erode to make the digit a bit clearer
+    sqr_h, sqr_w, _ = sqr.shape
+    sqr = sqr[sqr_h//4:, 0:sqr_w - sqr_w//4, :]
+    sqr_h, sqr_w, _ = sqr.shape
+    sqr = sqr[0:sqr_h - sqr_h//4, sqr_w//4:, :]
+    return sqr
+
+def process_square(sqr : np.ndarray) -> np.ndarray:
+    """
+        returns a de-noised and tresholded image of the square
+    """
+    sqr = cv.cvtColor(sqr, cv.COLOR_BGR2GRAY)
+    sqr = cv.GaussianBlur(sqr, (9, 9), 0)
+    sqr = cv.bitwise_not(cv.adaptiveThreshold(sqr, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 11, 2))
     return sqr
 
 def get_square_state(sqr : np.ndarray) -> str:
     """
         returns 'x' if square contains a digit, otherwise returns 'o'
     """
-    mean = np.mean(get_square_cut(sqr.copy()))
+    sqr = get_square_cut(sqr)    
+    sqr = process_square(sqr)
+    mean = np.mean(sqr)
     return 'x' if mean > 20 else 'o'
 
 def get_square_digit(sqr : np.ndarray) -> str:
