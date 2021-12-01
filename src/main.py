@@ -2,7 +2,7 @@ import utils
 import traceback
 
 verbose = True
-types = ['classic', 'jigsaw']  # folder names for types of sudoku images
+types = ['clasic', 'jigsaw']  # folder names for types of sudoku images
 
 for type in types:
     for img, img_name in utils.get_images(type):

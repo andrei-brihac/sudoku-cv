@@ -16,7 +16,7 @@ Run **main.py** from the root folder using:
 
 ### Changing tasks and I/O paths.
 
-1. Changing which task to run can be done in **main.py** using the **types** variable.
+1. Changing which task to run can be done in **main.py** using the **types** variable. These are also the folder names for the sets of images in the input folder.
 
 2. Changing the paths to input and output folders can be done in **utils.py** using the **cwd**, **input_path**, **output_path** variables.
 
