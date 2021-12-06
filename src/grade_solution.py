@@ -127,8 +127,8 @@ predictions_path_root = f'{cwd}/Brihac_Andrei_333/'
 ground_truth_path_root = f'{cwd}/train/'
 
 #task1
-predictions_path = predictions_path_root + "clasic"
-ground_truth_path = ground_truth_path_root + "clasic"
+predictions_path = predictions_path_root + "classic"
+ground_truth_path = ground_truth_path_root + "classic"
 total_correct_task1,points_task1,total_correct_bonus_task1,points_bonus_task1 = evaluate_results_task1(predictions_path,ground_truth_path,verbose)
 print(total_correct_task1,points_task1,total_correct_bonus_task1,points_bonus_task1)
 
