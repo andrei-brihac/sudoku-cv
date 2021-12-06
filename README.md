@@ -28,6 +28,8 @@ Run **main.py** from the root folder using:
 
 The methods used for extracting the data are found in the **src/sudoku.py** folder. For more detailed information about the methods used read the docstrings.
 
+Also, a more detailed solution description in Romanian can be found in the **descriere-solutie.pdf** file. Task requirements in Romanian are in **cerinte.pdf**.
+
 A common method for both tasks is the cropping and straightening of the sudoku grid from the main image. It's done in multiple steps:
 
 1. Preprocessing the main image to bring out the grid edge. (see **enhance_grid**)
