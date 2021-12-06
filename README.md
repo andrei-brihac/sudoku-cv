@@ -49,3 +49,5 @@ The added difficulty is finding out which zone each cell belongs to. The jigsaw 
 4. Labels are changed according to these connections and then re-indexed to numbers from 1 to 9 - the total number of zones.
 
 My solution works 100% of the time for classic sudoku and about 50% of the time for jigsaw sudoku. You can use the functions in **src/utils.py** to display images and modify behaviour.
+
+The jigsaw sudoku solution could be improved to give better results by modifying the way in which neighbour cells are identified (current method is checking for borders of a cell with **numpy.mean**, similar to filled cell detection in task 1) and better image processing for removing thin lines and keeping thick lines. Check the methods in **get_grid_zones()** in **src/sudoku.py**.
